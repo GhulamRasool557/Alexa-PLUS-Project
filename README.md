@@ -136,19 +136,20 @@ A free Space sleeps after 48 hours with no visits; a free pinger (e.g. cron-job.
 ## Create the Jarvis skill (Alexa developer console)
 
 1. Sign in at developer.amazon.com/alexa/console/ask with the **same Amazon account as your Echo Dot**.
-2. **Create Skill**: name `Jarvis`, locale English (US) (match your Echo's language), type **Custom**,
+2. **Create Skill**: name `Jarvis`, locale matching your Echo's language (English (IN) in India, English (US) in the US), type **Custom**,
    hosting **Provision your own**, template **Start from scratch**.
 3. **Build > Interaction Model > JSON Editor**: paste `skill/interactionModels/custom/en-US.json`, then **Save** and **Build**.
-   If the console rejects the one-word invocation name, use `jarvis assistant`.
-4. **Build > Endpoint**: choose **HTTPS**, enter `https://<your-app>.onrender.com/alexa`,
+   The invocation name is `my jarvis`, because Alexa already has a public skill called "Jarvis"
+   that would answer "open jarvis" instead of yours.
+4. **Build > Endpoint**: choose **HTTPS**, enter `https://<your-app>.vercel.app/alexa`,
    and pick "My development endpoint is a sub-domain of a domain that has a wildcard certificate".
-5. Copy **Your Skill ID** from the Endpoint page into Render's `ALEXA_SKILL_ID` env var.
+5. Copy **Your Skill ID** from the Endpoint page into Vercel's `ALEXA_SKILL_ID` environment variable (optional; it makes the backend reject other skills).
 6. **Build > Interfaces**: turn on **Alexa Presentation Language** and tick the character display
    (Echo Dot with clock) option, then **Save Interfaces** and **Build Model** again.
 7. **Build > Permissions**: turn on **Reminders**.
 8. In the Alexa app on your phone: **More > Skills & Games > Your Skills > Dev > Jarvis > Settings**, allow Reminders.
    (The first time you ask for an alarm, Jarvis also sends a card there asking for this.)
-9. **Test** tab: set testing to **Development**, then type or say "open jarvis", then "hello".
+9. **Test** tab: set testing to **Development**, then type or say "open my jarvis", then "hello".
    Your Echo Dot can now use it too, no publishing needed.
 
 ## Talking to Jarvis

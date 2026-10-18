@@ -91,7 +91,22 @@ search page in a new tab instead of playing inside the dashboard.
 3. Tap the "Tap once" bar. Browsers only allow sound and new tabs after one tap on the page.
 4. Allow pop-ups for the site once (browser address bar > pop-up icon > Always allow), so Jarvis can open tabs.
 
-## Deploy the backend (Render)
+## Deploy for free (Hugging Face Spaces, no card needed)
+
+1. Sign up at huggingface.co (free).
+2. **New Space**: name `jarvis`, SDK **Docker**, template **Blank**, hardware **CPU basic (free)**, **Public**. Create it.
+3. In the Space: **Settings > Variables and secrets > New secret**, add `API_KEY` (any long password you make up).
+   Add `MONGODB_URI`, `YOUTUBE_API_KEY` and `ALEXA_SKILL_ID` the same way when you have them.
+4. On huggingface.co: your picture > **Settings > Access Tokens > Create new token**, type **Write**. Copy it.
+5. On GitHub, this repo: **Settings > Secrets and variables > Actions**.
+   - **Secrets** tab > New: name `HF_TOKEN`, value = the token.
+   - **Variables** tab > New: name `HF_SPACE`, value = `your-hf-username/jarvis`.
+6. **Actions** tab > **Deploy to Hugging Face** > **Run workflow**. After that, every change on `main` deploys by itself.
+
+Your address is `https://your-hf-username-jarvis.hf.space` (the Alexa endpoint is that plus `/alexa`).
+A free Space sleeps after 48 hours with no visits; a free pinger (e.g. cron-job.org) opening `/health` every hour keeps it awake.
+
+## Deploy the backend (Render) (paid alternative)
 
 1. Push this folder to a GitHub repo.
 2. On render.com: **New > Blueprint**, pick the repo. It reads `render.yaml` and builds the website and backend together.

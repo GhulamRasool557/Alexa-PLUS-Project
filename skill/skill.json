@@ -1,0 +1,33 @@
+{
+  "manifest": {
+    "publishingInformation": {
+      "locales": {
+        "en-US": {
+          "name": "Jarvis",
+          "summary": "Personal voice assistant that controls my own dashboard and phone.",
+          "description": "Sends voice commands to my own Jarvis backend.",
+          "examplePhrases": [
+            "Alexa, open Jarvis",
+            "Alexa, ask Jarvis to say hello"
+          ]
+        }
+      },
+      "isAvailableWorldwide": false,
+      "distributionCountries": []
+    },
+    "apis": {
+      "custom": {
+        "endpoint": {
+          "uri": "https://YOUR-BACKEND.onrender.com/alexa",
+          "sslCertificateType": "Wildcard"
+        }
+      }
+    },
+    "manifestVersion": "1.0",
+    "permissions": [
+      {
+        "name": "alexa::alerts:reminders:skill:readwrite"
+      }
+    ]
+  }
+}

@@ -1,0 +1,357 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "jarvis",
+      "intents": [
+        {
+          "name": "HelloIntent",
+          "slots": [],
+          "samples": [
+            "hello",
+            "hi",
+            "hey",
+            "hello jarvis",
+            "hi jarvis",
+            "say hello",
+            "good morning",
+            "good evening"
+          ]
+        },
+        {
+          "name": "CommandIntent",
+          "slots": [
+            {
+              "name": "phrase",
+              "type": "CATCH_ALL"
+            }
+          ],
+          "samples": [
+            "{phrase}"
+          ]
+        },
+        {
+          "name": "SetAlarmIntent",
+          "slots": [
+            {
+              "name": "time",
+              "type": "AMAZON.TIME",
+              "samples": [
+                "{time}",
+                "at {time}",
+                "for {time}",
+                "in {duration}",
+                "{date} at {time}"
+              ]
+            },
+            {
+              "name": "date",
+              "type": "AMAZON.DATE"
+            },
+            {
+              "name": "duration",
+              "type": "AMAZON.DURATION"
+            }
+          ],
+          "samples": [
+            "set an alarm for {time}",
+            "set alarm for {time}",
+            "set an alarm at {time}",
+            "set an alarm for {time} {date}",
+            "set an alarm for {date} at {time}",
+            "wake me up at {time}",
+            "wake me up at {time} {date}",
+            "wake me up {date} at {time}",
+            "wake me up in {duration}",
+            "set an alarm in {duration}",
+            "alarm for {time}"
+          ]
+        },
+        {
+          "name": "SetReminderIntent",
+          "slots": [
+            {
+              "name": "task",
+              "type": "CATCH_ALL",
+              "samples": [
+                "to {task}",
+                "{task}"
+              ]
+            },
+            {
+              "name": "time",
+              "type": "AMAZON.TIME",
+              "samples": [
+                "{time}",
+                "at {time}",
+                "for {time}",
+                "in {duration}",
+                "{date} at {time}"
+              ]
+            },
+            {
+              "name": "date",
+              "type": "AMAZON.DATE"
+            },
+            {
+              "name": "duration",
+              "type": "AMAZON.DURATION"
+            }
+          ],
+          "samples": [
+            "remind me to {task} at {time}",
+            "remind me to {task} {date} at {time}",
+            "remind me to {task} at {time} {date}",
+            "remind me {date} at {time} to {task}",
+            "remind me at {time} to {task}",
+            "remind me to {task} in {duration}",
+            "remind me in {duration} to {task}",
+            "set a reminder to {task} at {time}",
+            "set a reminder to {task} in {duration}",
+            "remind me to {task}"
+          ]
+        },
+        {
+          "name": "AMAZON.HelpIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.StopIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.CancelIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.NavigateHomeIntent",
+          "samples": []
+        },
+        {
+          "name": "AMAZON.FallbackIntent",
+          "samples": []
+        }
+      ],
+      "types": [
+        {
+          "name": "CATCH_ALL",
+          "values": [
+            {
+              "name": {
+                "value": "open youtube"
+              }
+            },
+            {
+              "name": {
+                "value": "play lofi music on youtube"
+              }
+            },
+            {
+              "name": {
+                "value": "search for the weather in lahore"
+              }
+            },
+            {
+              "name": {
+                "value": "open chrome"
+              }
+            },
+            {
+              "name": {
+                "value": "open claude"
+              }
+            },
+            {
+              "name": {
+                "value": "open whatsapp"
+              }
+            },
+            {
+              "name": {
+                "value": "open vs code"
+              }
+            },
+            {
+              "name": {
+                "value": "add buy milk to my to do list"
+              }
+            },
+            {
+              "name": {
+                "value": "remove buy milk"
+              }
+            },
+            {
+              "name": {
+                "value": "read my to do list"
+              }
+            },
+            {
+              "name": {
+                "value": "set an alarm for seven am"
+              }
+            },
+            {
+              "name": {
+                "value": "remind me to drink water at five pm"
+              }
+            },
+            {
+              "name": {
+                "value": "call ahmed"
+              }
+            },
+            {
+              "name": {
+                "value": "call mom"
+              }
+            },
+            {
+              "name": {
+                "value": "send a message to ali"
+              }
+            },
+            {
+              "name": {
+                "value": "what time is it"
+              }
+            },
+            {
+              "name": {
+                "value": "turn off"
+              }
+            },
+            {
+              "name": {
+                "value": "yes"
+              }
+            },
+            {
+              "name": {
+                "value": "no"
+              }
+            },
+            {
+              "name": {
+                "value": "stop the video"
+              }
+            },
+            {
+              "name": {
+                "value": "next video"
+              }
+            },
+            {
+              "name": {
+                "value": "pause"
+              }
+            },
+            {
+              "name": {
+                "value": "search how to make tea"
+              }
+            },
+            {
+              "name": {
+                "value": "play the latest song by atif aslam"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "dialog": {
+      "delegationStrategy": "SKILL_RESPONSE",
+      "intents": [
+        {
+          "name": "SetAlarmIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "time",
+              "type": "AMAZON.TIME",
+              "confirmationRequired": false,
+              "elicitationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Time"
+              }
+            },
+            {
+              "name": "date",
+              "type": "AMAZON.DATE",
+              "confirmationRequired": false,
+              "elicitationRequired": false,
+              "prompts": {}
+            },
+            {
+              "name": "duration",
+              "type": "AMAZON.DURATION",
+              "confirmationRequired": false,
+              "elicitationRequired": false,
+              "prompts": {}
+            }
+          ]
+        },
+        {
+          "name": "SetReminderIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "task",
+              "type": "CATCH_ALL",
+              "confirmationRequired": false,
+              "elicitationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Task"
+              }
+            },
+            {
+              "name": "time",
+              "type": "AMAZON.TIME",
+              "confirmationRequired": false,
+              "elicitationRequired": false,
+              "prompts": {
+                "elicitation": "Elicit.Time"
+              }
+            },
+            {
+              "name": "date",
+              "type": "AMAZON.DATE",
+              "confirmationRequired": false,
+              "elicitationRequired": false,
+              "prompts": {}
+            },
+            {
+              "name": "duration",
+              "type": "AMAZON.DURATION",
+              "confirmationRequired": false,
+              "elicitationRequired": false,
+              "prompts": {}
+            }
+          ]
+        }
+      ]
+    },
+    "prompts": [
+      {
+        "id": "Elicit.Time",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "For what time?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Task",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "What should I remind you about?"
+          }
+        ]
+      }
+    ]
+  }
+}

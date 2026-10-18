@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: jarvis
+    runtime: node
+    # Builds the React website, then the backend serves it alongside /alexa and /api.
+    buildCommand: cd web && npm ci && npm run build && cd ../backend && npm ci --omit=dev
+    startCommand: cd backend && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: ALEXA_SKILL_ID
+        sync: false
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: API_KEY
+        generateValue: true

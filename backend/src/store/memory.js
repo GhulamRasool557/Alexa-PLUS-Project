@@ -6,9 +6,26 @@ function createMemoryStore() {
   let todos = [];
   let reminders = [];
   let history = [];
+  let events = [];
+  const screens = new Map();
 
   return {
     kind: 'memory',
+    events: {
+      add: async (event) => {
+        const saved = { id: randomUUID(), ...event };
+        events.push(saved);
+        events = events.slice(-200);
+        return saved;
+      },
+      since: async (date) => events.filter((e) => e.at > date),
+    },
+    screens: {
+      seen: async (id) => {
+        screens.set(id, Date.now());
+      },
+      countActive: async (withinMs) => [...screens.values()].filter((t) => Date.now() - t < withinMs).length,
+    },
     todos: {
       list: async () => todos.filter((t) => !t.done),
       add: async (text) => {

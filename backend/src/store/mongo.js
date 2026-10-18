@@ -36,6 +36,18 @@ const History = mongoose.model(
   ),
 );
 
+// Dashboard events (actions, results, list changes). Kept for an hour.
+const Event = mongoose.model(
+  'Event',
+  new mongoose.Schema(
+    { type: String, data: mongoose.Schema.Types.Mixed, at: { type: Date, index: { expires: 3600 } } },
+    { toJSON },
+  ),
+);
+
+// When each open dashboard last checked in.
+const Screen = mongoose.model('Screen', new mongoose.Schema({ _id: String, seenAt: { type: Date, index: true } }));
+
 const plain = (doc) => doc && doc.toJSON();
 
 async function createMongoStore(uri) {
@@ -44,6 +56,16 @@ async function createMongoStore(uri) {
 
   return {
     kind: 'mongo',
+    events: {
+      add: async (event) => plain(await Event.create(event)),
+      since: async (date) => (await Event.find({ at: { $gt: date } }).sort({ at: 1 }).limit(200)).map(plain),
+    },
+    screens: {
+      seen: async (id) => {
+        await Screen.updateOne({ _id: id }, { seenAt: new Date() }, { upsert: true });
+      },
+      countActive: async (withinMs) => Screen.countDocuments({ seenAt: { $gt: new Date(Date.now() - withinMs) } }),
+    },
     todos: {
       list: async () => (await Todo.find({ done: false }).sort({ createdAt: 1 })).map(plain),
       add: async (text) => plain(await Todo.create({ text })),

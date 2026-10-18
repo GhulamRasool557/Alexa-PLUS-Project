@@ -41,7 +41,7 @@ module.exports = [
     match: new RegExp(String.raw`^(?:clear|empty|delete|erase)(?: all)?(?: of)? ${LIST}$`),
     run: async () => {
       const count = await getStore().todos.clear();
-      realtime.notifyChanged('todos');
+      await realtime.notifyChanged('todos');
       return { speech: count ? `Cleared ${count} ${count === 1 ? 'item' : 'items'}.` : 'Your list was already empty.', display: 'DONE' };
     },
   },
@@ -51,7 +51,7 @@ module.exports = [
     run: async ({ match }) => {
       const text = (match[1] || match[2]).trim();
       await getStore().todos.add(text);
-      realtime.notifyChanged('todos');
+      await realtime.notifyChanged('todos');
       return { speech: `Added ${text} to your to-do list.`, display: 'ADDED' };
     },
   },
@@ -63,7 +63,7 @@ module.exports = [
       const todo = findTodo(await store.todos.list(), match[1]);
       if (!todo) return { speech: `I couldn't find ${match[1]} on your to-do list.`, display: '?' };
       await store.todos.complete(todo.id);
-      realtime.notifyChanged('todos');
+      await realtime.notifyChanged('todos');
       return { speech: `Done. Removed ${todo.text}.`, display: 'DONE' };
     },
   },

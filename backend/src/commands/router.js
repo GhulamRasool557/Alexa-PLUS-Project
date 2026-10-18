@@ -20,7 +20,7 @@ const NO_SCREEN = {
 const youtubeSearchUrl = (q) => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
 
 async function playOnYouTube(query) {
-  if (!realtime.screenCount()) return NO_SCREEN;
+  if (!(await realtime.screenCount())) return NO_SCREEN;
   let videos;
   try {
     videos = await youtube.searchVideos(query);
@@ -60,15 +60,15 @@ function findSite(spoken) {
   return SITES.find((site) => site.aliases.includes(name) || site.aliases.includes(spoken));
 }
 
-function openSite(site, url = site.url) {
-  if (!realtime.screenCount()) return NO_SCREEN;
+async function openSite(site, url = site.url) {
+  if (!(await realtime.screenCount())) return NO_SCREEN;
   return { speech: `Opening ${site.name}.`, display: site.display, action: { type: 'open-url', url } };
 }
 
 const googleSearchUrl = (q) => `https://www.google.com/search?q=${encodeURIComponent(q)}`;
 
 async function webSearch(query) {
-  const hasScreen = realtime.screenCount() > 0;
+  const hasScreen = (await realtime.screenCount()) > 0;
   const answer = await answers.quickAnswer(query);
   if (!hasScreen) {
     return answer ? { speech: answer, display: 'OK!' } : NO_SCREEN;
@@ -111,8 +111,8 @@ const handlers = [
   {
     name: 'youtube-stop',
     match: /^(stop|pause|close) (the )?(video|youtube|music)\b/,
-    run: () => {
-      if (!realtime.screenCount()) return NO_SCREEN;
+    run: async () => {
+      if (!(await realtime.screenCount())) return NO_SCREEN;
       return { speech: 'Stopped.', display: 'DONE', action: { type: 'youtube-stop' } };
     },
   },
@@ -125,8 +125,8 @@ const handlers = [
   {
     name: 'youtube-open',
     match: /^(open|show|launch|start) youtube$/,
-    run: () => {
-      if (!realtime.screenCount()) return NO_SCREEN;
+    run: async () => {
+      if (!(await realtime.screenCount())) return NO_SCREEN;
       return { speech: 'YouTube is open on your screen. What should I play?', display: 'YT ON', action: { type: 'youtube-open' } };
     },
   },
@@ -180,10 +180,13 @@ async function runCommand(text, context = {}) {
       : { command: null, speech: `I heard "${clean}", but I don't know that command yet.`, display: '?' };
   }
 
-  if (result.action) realtime.sendToScreens(result.action);
+  if (result.action) await realtime.sendToScreens(result.action);
   const entry = { text: clean, source: context.source, command: result.command, speech: result.speech, display: result.display, at: new Date() };
-  realtime.sendResultToScreens({ ...entry, action: result.action });
-  getStore().history.add(entry).catch((err) => console.error('Could not save history:', err.message));
+  // Awaited so serverless hosts don't freeze the function before these are saved.
+  await Promise.all([
+    realtime.sendResultToScreens({ ...entry, action: result.action }),
+    getStore().history.add(entry),
+  ]).catch((err) => console.error('Could not save result:', err.message));
   return result;
 }
 

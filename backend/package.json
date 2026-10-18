@@ -9,7 +9,7 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "VERIFY_ALEXA_SIGNATURE=false node --watch src/server.js",
-    "test": "node --test"
+    "test": "node --test test/*.test.js"
   },
   "author": "",
   "license": "ISC",
@@ -20,13 +20,9 @@
     "cors": "^2.8.6",
     "dotenv": "^18.0.8",
     "express": "^5.3.0",
-    "mongoose": "^8.24.5",
-    "socket.io": "^4.8.4"
+    "mongoose": "^8.24.5"
   },
   "engines": {
     "node": ">=20"
-  },
-  "devDependencies": {
-    "socket.io-client": "^4.8.4"
   }
 }

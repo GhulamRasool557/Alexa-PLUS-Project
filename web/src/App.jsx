@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { checkAuth, getHistory, getReminders, getTodos, setApiKey } from './api'
-import { useJarvisSocket } from './useJarvisSocket'
+import { useJarvisEvents } from './useJarvisEvents'
 import YouTubePanel from './components/YouTubePanel'
 import ChatPanel from './components/ChatPanel'
 import TodoPanel from './components/TodoPanel'
@@ -74,7 +74,7 @@ export default function App() {
     getHistory().then((r) => setLog(r.history), console.error)
   }, [auth, loadTodos, loadReminders])
 
-  const status = useJarvisSocket({ enabled: auth === 'ok', onAction, onResult, onChanged })
+  const status = useJarvisEvents({ enabled: auth === 'ok', onAction, onResult, onChanged })
 
   if (auth === 'checking') return <main className="center">Connecting…</main>
   if (auth === 'needed') return <KeyForm onSaved={() => setAuth('ok')} />

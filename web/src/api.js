@@ -34,3 +34,4 @@ export const addTodo = (text) => request('/api/todos', { method: 'POST', body: J
 export const completeTodo = (id) => request(`/api/todos/${id}/done`, { method: 'POST' })
 export const getReminders = () => request('/api/reminders')
 export const getHistory = () => request('/api/history')
+export const getEvents = (screen, since) => request(`/api/events?screen=${screen}&since=${encodeURIComponent(since)}`)

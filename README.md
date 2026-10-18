@@ -104,6 +104,8 @@ between requests. Both are free and need no card.
    Open **Environment Variables** and add:
    - `MONGODB_URI` = your Atlas connection string
    - `API_KEY` = any long password you make up (you type it once on each screen)
+   - `NODEJS_HELPERS` = `0` (otherwise Vercel parses Alexa's request body first and the
+     Alexa endpoint can't verify it)
    - later: `YOUTUBE_API_KEY`, `ALEXA_SKILL_ID`
 5. Click **Deploy**. Your address is shown when it finishes, like `https://alexa-plus-project.vercel.app`.
    The Alexa endpoint is that address plus `/alexa`.

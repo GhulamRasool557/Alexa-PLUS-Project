@@ -7,7 +7,7 @@ const config = require('./config');
 const { buildSkill } = require('./alexa/skill');
 const { runCommand } = require('./commands/router');
 const youtube = require('./services/youtube');
-const { getStore } = require('./store');
+const { getStore, getStoreProblem } = require('./store');
 const realtime = require('./realtime');
 
 const WEB_DIST = path.join(__dirname, '..', '..', 'web', 'dist');
@@ -32,7 +32,10 @@ function createApp(options = {}) {
   app.use(express.json());
 
   // For uptime checks and the keep-awake pinger.
-  app.get('/health', (req, res) => res.json({ ok: true, store: getStore().kind, time: new Date().toISOString() }));
+  app.get('/health', (req, res) => {
+    const problem = getStoreProblem();
+    res.json({ ok: true, store: getStore().kind, ...(problem && { problem }), time: new Date().toISOString() });
+  });
 
   // Lets the website check its saved API key before connecting.
   app.get('/api/auth', requireApiKey, (req, res) => res.json({ ok: true }));

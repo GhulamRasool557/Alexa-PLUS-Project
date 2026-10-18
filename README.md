@@ -4,7 +4,8 @@ Voice and text control through an Alexa skill called **Jarvis** and your own bac
 
 ```
 backend/   Node.js + Express server: Alexa endpoint (/alexa), text commands (/api/command),
-           live link to screens (Socket.IO), and serves the website
+           event feed that screens poll (/api/events), and serves the website
+api/       Vercel entry point (free hosting)
 web/       React dashboard (Vite): YouTube player, command chat box
 skill/     Alexa skill manifest and interaction model (paste into the Alexa developer console)
 render.yaml  One-click deploy config for Render (one service runs everything)
@@ -91,7 +92,25 @@ search page in a new tab instead of playing inside the dashboard.
 3. Tap the "Tap once" bar. Browsers only allow sound and new tabs after one tap on the page.
 4. Allow pop-ups for the site once (browser address bar > pop-up icon > Always allow), so Jarvis can open tabs.
 
-## Deploy for free (Hugging Face Spaces, no card needed)
+## Deploy for free (Vercel + MongoDB Atlas, no card needed)
+
+Vercel runs Jarvis as serverless functions, so it needs MongoDB to share data
+between requests. Both are free and need no card.
+
+1. Set up **MongoDB Atlas** first (section above) and copy your connection string.
+2. Go to vercel.com, **Sign Up > Continue with GitHub** (Hobby plan, free).
+3. **Add New > Project**, pick **Alexa-PLUS-Project**, click **Import**.
+4. Leave the build settings as they are (they come from `vercel.json`).
+   Open **Environment Variables** and add:
+   - `MONGODB_URI` = your Atlas connection string
+   - `API_KEY` = any long password you make up (you type it once on each screen)
+   - later: `YOUTUBE_API_KEY`, `ALEXA_SKILL_ID`
+5. Click **Deploy**. Your address is shown when it finishes, like `https://alexa-plus-project.vercel.app`.
+   The Alexa endpoint is that address plus `/alexa`.
+
+Every push to `main` redeploys automatically. Vercel functions don't sleep, so Alexa never waits for a wake-up.
+
+## Deploy with Docker (Hugging Face Spaces or any Docker host)
 
 1. Sign up at huggingface.co (free).
 2. **New Space**: name `jarvis`, SDK **Docker**, template **Blank**, hardware **CPU basic (free)**, **Public**. Create it.

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "cd backend && npm ci --omit=dev && cd ../web && npm ci",
+  "buildCommand": "cd web && npm run build",
+  "outputDirectory": "web/dist",
+  "rewrites": [
+    { "source": "/alexa", "destination": "/api" },
+    { "source": "/health", "destination": "/api" },
+    { "source": "/api/:path*", "destination": "/api" }
+  ],
+  "functions": {
+    "api/index.js": { "maxDuration": 10 }
+  }
+}

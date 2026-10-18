@@ -1,25 +1,17 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const http = require('http');
-const { io: connect } = require('socket.io-client');
 const { createApp } = require('../src/app');
-const { initRealtime } = require('../src/realtime');
+const { fakeScreen } = require('./helpers');
 const answers = require('../src/services/answers');
 
-let server, base, screen;
+let server, base;
 test.before(async () => {
-  server = http.createServer(createApp({ verifyAlexaSignature: false }));
-  initRealtime(server);
-  server.listen(0);
+  server = createApp({ verifyAlexaSignature: false }).listen(0);
   await new Promise((r) => server.once('listening', r));
   base = `http://127.0.0.1:${server.address().port}`;
-  screen = connect(base, { transports: ['websocket'] });
-  await new Promise((r) => screen.once('connect', r));
+  await fakeScreen(base).connect();
 });
-test.after(() => {
-  screen.close();
-  server.close();
-});
+test.after(() => server.close());
 
 const command = (text) =>
   fetch(base + '/api/command', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ text }) })

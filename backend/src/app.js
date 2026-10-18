@@ -67,18 +67,30 @@ function createApp(options = {}) {
     const text = String(req.body?.text || '').trim();
     if (!text) return res.status(400).json({ error: 'Missing text' });
     const todo = await getStore().todos.add(text);
-    realtime.notifyChanged('todos');
+    await realtime.notifyChanged('todos');
     res.status(201).json({ todo });
   });
 
   app.post('/api/todos/:id/done', requireApiKey, async (req, res) => {
     const todo = await getStore().todos.complete(req.params.id);
     if (!todo) return res.status(404).json({ error: 'Not found' });
-    realtime.notifyChanged('todos');
+    await realtime.notifyChanged('todos');
     res.json({ todo });
   });
 
   app.get('/api/reminders', requireApiKey, async (req, res) => res.json({ reminders: await getStore().reminders.upcoming() }));
+
+  // Dashboards poll this every couple of seconds. It also marks the screen as
+  // connected, so voice commands know someone is watching.
+  app.get('/api/events', requireApiKey, async (req, res) => {
+    const store = getStore();
+    const screen = String(req.query.screen || '').slice(0, 64);
+    const since = new Date(String(req.query.since || ''));
+    const now = new Date();
+    if (screen) await store.screens.seen(screen);
+    const events = Number.isNaN(since.getTime()) ? [] : await store.events.since(since);
+    res.json({ events, now: now.toISOString() });
+  });
 
   app.get('/api/history', requireApiKey, async (req, res) => res.json({ history: await getStore().history.recent(50) }));
 

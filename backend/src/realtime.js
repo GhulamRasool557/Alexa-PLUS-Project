@@ -1,41 +1,22 @@
-// Live link to every open dashboard (website, TV, phone browser).
-// Commands that need a screen are pushed here as "action" events.
-const { Server } = require('socket.io');
-const config = require('./config');
+// Link to every open dashboard (website, TV, phone browser).
+// Events are written to the store and dashboards poll /api/events for them, so
+// this works on serverless hosts (Vercel) as well as an always-on server.
+const { getStore } = require('./store');
 
-let io = null;
+// A screen counts as connected if it polled within this window.
+const SCREEN_TIMEOUT_MS = 15000;
 
-function initRealtime(httpServer) {
-  io = new Server(httpServer, { cors: { origin: '*' } });
-  io.use((socket, next) => {
-    if (config.apiKey && socket.handshake.auth.apiKey !== config.apiKey) {
-      return next(new Error('Invalid API key'));
-    }
-    next();
-  });
-  io.on('connection', (socket) => {
-    socket.join('screens');
-    console.log(`Screen connected (${screenCount()} online)`);
-    socket.on('disconnect', () => console.log(`Screen disconnected (${screenCount()} online)`));
-  });
-  return io;
-}
+const screenCount = () => getStore().screens.countActive(SCREEN_TIMEOUT_MS);
 
-function screenCount() {
-  return io ? io.sockets.adapter.rooms.get('screens')?.size || 0 : 0;
-}
+const publish = (type, data) => getStore().events.add({ type, data, at: new Date() });
 
-function sendToScreens(action) {
-  if (io) io.to('screens').emit('action', action);
-}
+// Something a screen must do, e.g. play a video or open a tab.
+const sendToScreens = (action) => publish('action', action);
 
-function sendResultToScreens(result) {
-  if (io) io.to('screens').emit('result', result);
-}
+// A finished command, shown in every dashboard's command log.
+const sendResultToScreens = (result) => publish('result', result);
 
-module.exports = { initRealtime, screenCount, sendToScreens, sendResultToScreens };
+// Tell dashboards to refresh a list ("todos", "reminders").
+const notifyChanged = (what) => publish('changed', what);
 
-// Tell dashboards to refresh a list (e.g. "todos", "reminders").
-module.exports.notifyChanged = (what) => {
-  if (io) io.to('screens').emit('changed', what);
-};
+module.exports = { screenCount, sendToScreens, sendResultToScreens, notifyChanged, SCREEN_TIMEOUT_MS };

@@ -132,7 +132,7 @@ async function createReminder(handlerInput, kind) {
     const client = handlerInput.serviceClientFactory.getReminderManagementServiceClient();
     const created = await client.createReminder(reminder);
     await getStore().reminders.add({ kind, text: task, at: built.at, alexaAlertToken: created.alertToken });
-    realtime.notifyChanged('reminders');
+    await realtime.notifyChanged('reminders');
   } catch (err) {
     if (err.statusCode === 401 || err.statusCode === 403) return askForPermission(handlerInput);
     console.error('Reminder failed:', err.message);
@@ -141,7 +141,7 @@ async function createReminder(handlerInput, kind) {
 
   const when = describe(built, timeZone);
   const speech = kind === 'alarm' ? `Alarm set ${when}.` : `Okay, I'll remind you to ${escape(task)} ${when}.`;
-  realtime.sendResultToScreens({ text: kind, source: 'alexa', command: kind, speech: speech.replace(/<[^>]+>/g, ''), display: 'SET', at: new Date() });
+  await realtime.sendResultToScreens({ text: kind, source: 'alexa', command: kind, speech: speech.replace(/<[^>]+>/g, ''), display: 'SET', at: new Date() });
   addDisplayText(handlerInput, 'SET');
   return responseBuilder.speak(speech).reprompt('Anything else?').withShouldEndSession(false).getResponse();
 }

@@ -1,18 +1,14 @@
 const test = require('node:test');
 const assert = require('node:assert');
-const http = require('http');
-const { io: connect } = require('socket.io-client');
 const { createApp } = require('../src/app');
-const { initRealtime } = require('../src/realtime');
+const { fakeScreen } = require('./helpers');
 const youtube = require('../src/services/youtube');
 
 const VIDEO = { videoId: 'abc123', title: 'Lofi Beats', channel: 'Lofi Girl' };
 
 let server, base;
 test.before(async () => {
-  server = http.createServer(createApp({ verifyAlexaSignature: false }));
-  initRealtime(server);
-  server.listen(0);
+  server = createApp({ verifyAlexaSignature: false }).listen(0);
   await new Promise((r) => server.once('listening', r));
   base = `http://127.0.0.1:${server.address().port}`;
 });
@@ -23,13 +19,9 @@ const command = (text) =>
     .then((r) => r.json());
 
 async function withScreen(fn) {
-  const socket = connect(base, { transports: ['websocket'] });
-  await new Promise((r) => socket.once('connect', r));
-  try {
-    return await fn(socket);
-  } finally {
-    socket.close();
-  }
+  const screen = fakeScreen(base);
+  await screen.connect();
+  return fn(screen);
 }
 
 test('without a screen, Jarvis says to open the website', async () => {
@@ -43,12 +35,11 @@ test('play X searches YouTube and pushes the video to the screen', async (t) => 
     assert.strictEqual(q, 'lofi music');
     return [VIDEO];
   });
-  await withScreen(async (socket) => {
-    const pushed = new Promise((r) => socket.once('action', r));
+  await withScreen(async (screen) => {
     const res = await command('Jarvis, play lofi music on YouTube');
     assert.strictEqual(res.speech, 'Playing Lofi Beats on YouTube.');
     assert.strictEqual(res.display, 'YT ON');
-    const action = await pushed;
+    const action = await screen.next('action');
     assert.strictEqual(action.type, 'youtube-play');
     assert.strictEqual(action.video.videoId, 'abc123');
   });

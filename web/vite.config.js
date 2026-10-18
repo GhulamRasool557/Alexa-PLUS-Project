@@ -9,7 +9,6 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': backend,
-      '/socket.io': { target: backend, ws: true },
     },
   },
 })

@@ -39,7 +39,6 @@
                 "{time}",
                 "at {time}",
                 "for {time}",
-                "in {duration}",
                 "{date} at {time}"
               ]
             },
@@ -84,7 +83,6 @@
                 "{time}",
                 "at {time}",
                 "for {time}",
-                "in {duration}",
                 "{date} at {time}"
               ]
             },

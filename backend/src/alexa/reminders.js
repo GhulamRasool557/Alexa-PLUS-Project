@@ -110,16 +110,16 @@ async function createReminder(handlerInput, kind) {
   const intent = requestEnvelope.request.intent;
   if (kind === 'reminder' && !task) {
     const q = 'What should I remind you about?';
-    return responseBuilder.speak(q).reprompt(q).addElicitSlotDirective('task', intent).getResponse();
+    return responseBuilder.speak(q).addElicitSlotDirective('task', intent).getResponse();
   }
   if (!slot('time') && !slot('duration')) {
     const q = kind === 'alarm' ? 'For what time?' : 'When should I remind you?';
-    return responseBuilder.speak(q).reprompt(q).addElicitSlotDirective('time', intent).getResponse();
+    return responseBuilder.speak(q).addElicitSlotDirective('time', intent).getResponse();
   }
 
   const timeZone = await deviceTimeZone(handlerInput);
   const built = buildTrigger({ time: slot('time'), date: slot('date'), duration: slot('duration'), timeZone });
-  if (built.error) return responseBuilder.speak(built.error).reprompt(built.error).addElicitSlotDirective('time', intent).getResponse();
+  if (built.error) return responseBuilder.speak(built.error).addElicitSlotDirective('time', intent).getResponse();
 
   const reminder = {
     requestTime: new Date().toISOString(),
@@ -136,14 +136,14 @@ async function createReminder(handlerInput, kind) {
   } catch (err) {
     if (err.statusCode === 401 || err.statusCode === 403) return askForPermission(handlerInput);
     console.error('Reminder failed:', err.message);
-    return responseBuilder.speak("Sorry, I couldn't set that. Try again.").reprompt('What should I do?').getResponse();
+    return responseBuilder.speak("Sorry, I couldn't set that. Try again.").withShouldEndSession(true).getResponse();
   }
 
   const when = describe(built, timeZone);
   const speech = kind === 'alarm' ? `Alarm set ${when}.` : `Okay, I'll remind you to ${escape(task)} ${when}.`;
   await realtime.sendResultToScreens({ text: kind, source: 'alexa', command: kind, speech: speech.replace(/<[^>]+>/g, ''), display: 'SET', at: new Date() });
   addDisplayText(handlerInput, 'SET');
-  return responseBuilder.speak(speech).reprompt('Anything else?').withShouldEndSession(false).getResponse();
+  return responseBuilder.speak(speech).withShouldEndSession(true).getResponse();
 }
 
 const escape = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

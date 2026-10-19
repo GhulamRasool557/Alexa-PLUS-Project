@@ -3,23 +3,20 @@ const { runCommand } = require('../commands/router');
 const { createReminder } = require('./reminders');
 const { addDisplayText } = require('./display');
 
-const REPROMPT = 'What should I do?';
-
 // Video titles and spoken text can contain characters that break Alexa's SSML.
 const escapeSsml = (text) =>
   String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-// Speak the result and keep the session open so you can give another command.
-function respond(handlerInput, result, { endSession = false } = {}) {
+// Speak once. Commands end the session; `listen` keeps the mic open for one
+// answer with no reprompt, so Alexa goes quiet if nothing is said.
+function respond(handlerInput, result, { listen = false } = {}) {
   addDisplayText(handlerInput, result.display);
-  const builder = handlerInput.responseBuilder.speak(escapeSsml(result.speech));
-  if (!endSession) builder.reprompt(REPROMPT);
-  return builder.withShouldEndSession(endSession).getResponse();
+  return handlerInput.responseBuilder.speak(escapeSsml(result.speech)).withShouldEndSession(!listen).getResponse();
 }
 
 const LaunchRequestHandler = {
   canHandle: (h) => Alexa.getRequestType(h.requestEnvelope) === 'LaunchRequest',
-  handle: (h) => respond(h, { speech: 'Jarvis here. What should I do?', display: 'HI :)' }),
+  handle: (h) => respond(h, { speech: 'Jarvis here.', display: 'HI :)' }, { listen: true }),
 };
 
 const HelloIntentHandler = {
@@ -65,7 +62,7 @@ const StopIntentHandler = {
   canHandle: (h) =>
     Alexa.getRequestType(h.requestEnvelope) === 'IntentRequest' &&
     ['AMAZON.StopIntent', 'AMAZON.CancelIntent'].includes(Alexa.getIntentName(h.requestEnvelope)),
-  handle: (h) => respond(h, { speech: 'Goodbye.', display: 'BYE' }, { endSession: true }),
+  handle: (h) => respond(h, { speech: 'Goodbye.', display: 'BYE' }),
 };
 
 const FallbackIntentHandler = {

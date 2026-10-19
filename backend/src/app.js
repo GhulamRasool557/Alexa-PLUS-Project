@@ -55,7 +55,7 @@ function createApp(options = {}) {
     if (!q) return res.status(400).json({ error: 'Missing q' });
     try {
       const videos = await youtube.searchVideos(q);
-      if (videos === null) return res.status(501).json({ error: 'YOUTUBE_API_KEY is not set' });
+      if (videos === null) return res.status(501).json({ error: 'YouTube search is not available right now' });
       res.json({ videos });
     } catch (err) {
       res.status(502).json({ error: err.message });

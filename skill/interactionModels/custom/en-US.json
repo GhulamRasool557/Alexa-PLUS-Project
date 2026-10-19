@@ -26,7 +26,11 @@
             }
           ],
           "samples": [
-            "{phrase}"
+            "{phrase}",
+            "to {phrase}",
+            "please {phrase}",
+            "can you {phrase}",
+            "i want to {phrase}"
           ]
         },
         {
@@ -122,10 +126,6 @@
         },
         {
           "name": "AMAZON.NavigateHomeIntent",
-          "samples": []
-        },
-        {
-          "name": "AMAZON.FallbackIntent",
           "samples": []
         }
       ],
@@ -251,6 +251,56 @@
             {
               "name": {
                 "value": "play the latest song by atif aslam"
+              }
+            },
+            {
+              "name": {
+                "value": "open youtube on my laptop"
+              }
+            },
+            {
+              "name": {
+                "value": "play a video on youtube"
+              }
+            },
+            {
+              "name": {
+                "value": "play songs on youtube"
+              }
+            },
+            {
+              "name": {
+                "value": "play arijit singh songs"
+              }
+            },
+            {
+              "name": {
+                "value": "search youtube for funny videos"
+              }
+            },
+            {
+              "name": {
+                "value": "play the next video"
+              }
+            },
+            {
+              "name": {
+                "value": "pause the video"
+              }
+            },
+            {
+              "name": {
+                "value": "open google"
+              }
+            },
+            {
+              "name": {
+                "value": "what is the time in delhi"
+              }
+            },
+            {
+              "name": {
+                "value": "who is the prime minister of india"
               }
             }
           ]

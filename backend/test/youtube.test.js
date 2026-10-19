@@ -59,3 +59,17 @@ test('open youtube and stop the video', async () => {
     assert.strictEqual((await command('stop the video')).action.type, 'youtube-stop');
   });
 });
+
+test('without an API key, videos are read from the YouTube results page', () => {
+  const data = {
+    contents: { sectionListRenderer: { contents: [{ itemSectionRenderer: { contents: [
+      { videoRenderer: { videoId: 'v1', title: { runs: [{ text: 'Lofi Beats' }] }, ownerText: { runs: [{ text: 'Lofi Girl' }] }, thumbnail: { thumbnails: [{ url: 'https://i.ytimg.com/v1.jpg' }] } } },
+      { adSlotRenderer: {} },
+      { videoRenderer: { videoId: 'v2', title: { runs: [{ text: 'Rain Sounds' }] } } },
+    ] } }] } },
+  };
+  const html = `<html><script>var ytInitialData = ${JSON.stringify(data)};</script></html>`;
+  assert.deepStrictEqual(youtube.parseResultsPage(html).map((v) => v.videoId), ['v1', 'v2']);
+  assert.strictEqual(youtube.parseResultsPage(html)[0].channel, 'Lofi Girl');
+  assert.deepStrictEqual(youtube.parseResultsPage('<html>no data</html>'), []);
+});

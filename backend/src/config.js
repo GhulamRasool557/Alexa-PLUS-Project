@@ -10,7 +10,7 @@ module.exports = {
   apiKey: process.env.API_KEY || '',
 };
 
-// YouTube Data API v3 key (Google Cloud console). Without it, YouTube searches open youtube.com instead of playing inside the dashboard.
+// YouTube Data API v3 key (Google Cloud console). Optional: without it, Jarvis reads YouTube's results page instead.
 module.exports.youtubeApiKey = process.env.YOUTUBE_API_KEY || '';
 
 // MongoDB Atlas connection string. Without it, data is kept in memory only.

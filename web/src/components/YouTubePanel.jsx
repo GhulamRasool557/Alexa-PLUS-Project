@@ -15,7 +15,7 @@ export default function YouTubePanel({ video, results, onPlay, onResults, onClos
       const { videos } = await searchYouTube(query)
       onResults(videos)
     } catch (err) {
-      setError(err.status === 501 ? 'YouTube search needs YOUTUBE_API_KEY on the server.' : err.message)
+      setError(err.status === 501 ? 'YouTube search is not available right now. Try again.' : err.message)
     } finally {
       setBusy(false)
     }

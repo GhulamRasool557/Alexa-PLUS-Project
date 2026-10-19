@@ -24,10 +24,11 @@ async function post(path, body, headers = {}) {
   return { status: res.status, body: await res.json() };
 }
 
-test('launch greets and keeps the session open', async () => {
+test('launch greets and listens once without a reprompt', async () => {
   const { body } = await post('/alexa', alexaRequest({ type: 'LaunchRequest' }));
   assert.match(body.response.outputSpeech.ssml, /Jarvis here/);
   assert.strictEqual(body.response.shouldEndSession, false);
+  assert.strictEqual(body.response.reprompt, undefined);
 });
 
 test('HelloIntent says hello', async () => {
@@ -39,6 +40,8 @@ test('catch-all CommandIntent routes spoken text', async () => {
   const intent = { name: 'CommandIntent', slots: { phrase: { name: 'phrase', value: 'hello there' } } };
   const { body } = await post('/alexa', alexaRequest({ type: 'IntentRequest', intent }));
   assert.match(body.response.outputSpeech.ssml, /Jarvis is online/);
+  assert.strictEqual(body.response.shouldEndSession, true);
+  assert.strictEqual(body.response.reprompt, undefined);
 });
 
 test('stop ends the session', async () => {
